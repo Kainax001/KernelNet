@@ -1,0 +1,40 @@
+# Usage:
+#   dev:   docker compose run dev python src/data/preprocess.py --run proposed_e2e
+#   train: docker compose run train python src/train/train.py --run proposed_e2e
+
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+    shm_size: 2gb             # DataLoader num_workers 사용 시 공유 메모리
+    stdin_open: true
+    tty: true
+    command: bash
+    environment:
+      - PYTHONPATH=/workspace  # 절대 import (from config import ...) 가능
+    volumes:
+      - .:/workspace           # data/, results/, checkpoints/ 포함 — 별도 볼륨 불필요
+      - ./kaggle.json:/root/.kaggle/kaggle.json:ro
+
+  train:
+    build:
+      context: .
+      target: train
+    shm_size: 8gb             # 대용량 배치 + 멀티워커 DataLoader
+    stdin_open: true
+    tty: true
+    command: bash
+    environment:
+      - PYTHONPATH=/workspace
+      - TORCH_HOME=/workspace/.cache/torch  # pretrained 가중치 호스트에 캐시 → 재다운로드 방지
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - .:/workspace
+      - ./kaggle.json:/root/.kaggle/kaggle.json:ro

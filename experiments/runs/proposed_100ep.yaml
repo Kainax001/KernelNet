@@ -1,0 +1,10 @@
+# ──────────────────────────────────────────────
+# runs/proposed_100ep.yaml
+# ProposedModel E2E 100 epoch
+# ──────────────────────────────────────────────
+experiment:
+  name: "proposed_100ep"
+train:
+  epochs: 100
+wandb:
+  tags: ["proposed", "e2e", "100ep"]

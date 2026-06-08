@@ -1,0 +1,9 @@
+mediapipe==0.10.9
+opencv-python==4.9.0.80
+albumentations==1.4.0
+scipy
+h5py
+pyyaml
+numpy
+wandb
+tqdm

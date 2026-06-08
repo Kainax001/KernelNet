@@ -1,0 +1,12 @@
+# ──────────────────────────────────────────────
+# runs/baseline_e2e.yaml
+# BaselineModel (KernelNet 없음, Regressor hidden_dim=1024 고정) E2E 학습.
+# ──────────────────────────────────────────────
+experiment:
+  name: "baseline_e2e_v1"
+model:
+  variant: "baseline"
+  regressor:
+    hidden_dim: 1024         # baseline 기본 크기
+wandb:
+  tags: ["baseline", "e2e"]

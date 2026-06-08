@@ -1,0 +1,15 @@
+# ──────────────────────────────────────────────
+# runs/proposed_seq.yaml
+# ProposedModel Sequential 학습:
+#   Phase1 (epoch 1~20): Regressor만 학습 (Backbone·KernelNet 동결)
+#   Phase2 (epoch 21~50): 전체 fine-tune
+# warmup 5 epoch → LinearLR→CosineAnnealingLR
+# ──────────────────────────────────────────────
+experiment:
+  name: "proposed_seq_v1"
+train:
+  mode: "sequential"
+  freeze_ratio: 0.4          # 50epoch × 0.4 = Phase1 20epoch
+  warmup_epochs: 5           # Phase2 시작 후 5epoch LinearLR warmup
+wandb:
+  tags: ["proposed", "sequential"]

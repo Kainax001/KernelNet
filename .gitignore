@@ -1,0 +1,23 @@
+# 인증 정보
+kaggle.json
+
+# 데이터 / 산출물
+data/
+checkpoints/
+results/
+.cache/
+
+# 이미지
+*.png
+*.jpg
+*.jpeg
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# 에디터
+.vscode/
+.idea/

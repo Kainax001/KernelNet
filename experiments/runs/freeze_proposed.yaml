@@ -1,0 +1,17 @@
+# ──────────────────────────────────────────────
+# runs/freeze_proposed.yaml
+# KernelNet O + Backbone frozen + hidden=1024
+# 목적: Backbone 고정 시 KernelNet이 유일한 적응 메커니즘
+#       → KernelNet의 순수 전처리 효과 측정
+# 비교 대상: freeze_baseline (KernelNet X, 동일 조건)
+# ──────────────────────────────────────────────
+experiment:
+  name: "freeze_proposed"
+model:
+  variant: "proposed"
+  backbone:
+    freeze: true
+  regressor:
+    hidden_dim: 1024
+wandb:
+  tags: ["proposed", "e2e", "frozen_backbone"]

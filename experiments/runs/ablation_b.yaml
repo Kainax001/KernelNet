@@ -1,0 +1,14 @@
+# ──────────────────────────────────────────────
+# runs/ablation_b.yaml
+# KernelNet X + hidden=256
+# 목적: KernelNet 없이 Regressor만 줄였을 때 성능 확인
+#       Proposed와 비교해 KernelNet이 경량 Regressor를 보완하는지 검증
+# ──────────────────────────────────────────────
+experiment:
+  name: "ablation_b"
+model:
+  variant: "baseline"
+  regressor:
+    hidden_dim: 256
+wandb:
+  tags: ["baseline", "e2e", "ablation", "hidden256"]

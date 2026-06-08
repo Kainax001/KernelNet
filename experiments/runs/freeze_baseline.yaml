@@ -1,0 +1,16 @@
+# ──────────────────────────────────────────────
+# runs/freeze_baseline.yaml
+# KernelNet X + Backbone frozen + hidden=1024
+# 목적: Backbone 고정 + KernelNet 없음 → 순수 ImageNet 특징만 사용
+#       → freeze_proposed와 비교해 KernelNet 효과 측정
+# ──────────────────────────────────────────────
+experiment:
+  name: "freeze_baseline"
+model:
+  variant: "baseline"
+  backbone:
+    freeze: true
+  regressor:
+    hidden_dim: 1024
+wandb:
+  tags: ["baseline", "e2e", "frozen_backbone"]

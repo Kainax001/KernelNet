@@ -1,0 +1,108 @@
+# ──────────────────────────────────────────────
+# experiments/base.yaml
+# 모든 실험의 기본값. runs/ 파일이 이 값을 오버라이드한다.
+# 코드 내 하이퍼파라미터 하드코딩 금지 — 값 변경은 이 파일 또는 runs/*.yaml만 수정.
+# ──────────────────────────────────────────────
+
+experiment:
+  name: "proposed_e2e_v1"   # 실험 식별자. checkpoint_dir·result_dir 경로에 자동 삽입됨
+  description: ""            # 선택적 메모
+  seed: 42                   # 전역 시드 (torch / numpy / random)
+
+wandb:
+  enabled: false             # true로 바꾸면 wandb.init() 호출
+  project: "cv_eyetracker"
+  entity: ""                 # wandb 팀/사용자명. 빈 문자열이면 기본 계정 사용
+  tags: []                   # 실험 태그 목록 (예: ["proposed", "e2e"])
+
+paths:
+  raw_data:       "data/raw/MPIIGaze/Data"                # MPIIGaze 원본 디렉터리
+  hdf5_output:    "data/processed/mpiigaze.h5"           # preprocess.py 출력 경로
+  checkpoint_dir: "checkpoints/{experiment.name}"        # best.pt 저장 위치
+  result_dir:     "results/{experiment.name}"            # metrics.tsv, per_subject.tsv 저장 위치
+  summary_tsv:    "results/summary.tsv"                  # 전체 실험 누적 결과 (행 추가 방식)
+
+preprocess:
+  image_size: [640, 480]     # 원본 이미지 해상도 [W, H] — MPIIGaze 기본값
+  crop_size: 64              # 눈 크롭 후 리사이즈 크기 (px)
+  bbox_padding: 0.3          # 눈 영역 bbox 패딩 비율 (30%)
+  quality_filter:
+    brightness:
+      enabled: true          # false → 밝기 필터 비활성화 (runs/ 파일에서 오버라이드 가능)
+      min: 1                 # 전체 프레임 기준 하한 (MPIIGaze는 배경이 어두워 mean~1~5)
+      max: 220               # 평균 밝기 상한 (과노출 프레임 제거)
+    sharpness_min: 2.0       # 라플라시안 분산 하한 (전체 프레임 기준, 배경 포함)
+    gaze_angle_max_deg: 40.0 # 카메라 정면 기준 최대 허용 시선각 (도)
+  split:
+    train: 0.8
+    val:   0.1
+    test:  0.1
+    seed:  42                # 분할 재현성 고정 시드
+
+dataset:
+  num_workers: 4             # DataLoader 병렬 워커 수
+  pin_memory: true           # GPU 전송 속도 향상 (CUDA 사용 시)
+  augmentation:
+    horizontal_flip:
+      enabled: true
+      p: 0.5                 # 좌우 반전 확률. 적용 시 좌/우안 swap + g_x 부호 반전
+    rotate:
+      enabled: true
+      p: 0.5                 # 회전 적용 확률
+      limit_deg: 10          # 회전 범위: U(-10°, +10°). 적용 시 head_pose.roll 보정
+    brightness_contrast:
+      enabled: true
+      p: 0.5
+      brightness_limit: 0.2  # 밝기 변화 범위 ±0.2
+      contrast_limit: 0.2    # 대비 변화 범위 ±0.2
+    gauss_noise:
+      enabled: true
+      p: 0.3                 # 가우시안 노이즈 적용 확률
+    coarse_dropout:
+      enabled: true
+      p: 0.2                 # 소규모 영역 마스킹 확률
+  normalization:
+    mean: [0.406, 0.456, 0.485]  # ImageNet BGR 채널별 평균 (B, G, R 순)
+    std:  [0.225, 0.224, 0.229]  # ImageNet BGR 채널별 표준편차
+
+model:
+  variant: "proposed"        # "proposed" → ProposedModel / "baseline" → BaselineModel
+  backbone:
+    name: "resnet18"         # torchvision 모델명
+    pretrained: true         # ImageNet 사전학습 가중치 사용
+    freeze: false            # false → fine-tuning / true → backbone 동결
+  kernel_net:                # variant="proposed"일 때만 참조
+    channels: [32, 64, 128]  # Encoder Conv 출력 채널 수 (3단계)
+    kernel_size: 5           # 생성할 동적 커널 크기 (5×5)
+    fc_hidden: 512           # KernelNet FC1 출력 차원
+    init:
+      gaussian_sigma: 1.0    # FC2 bias 초기화용 가우시안 커널 σ
+      weight_std: 0.01       # FC2 weight 초기 표준편차 (≈0 → 초기엔 bias 지배)
+  regressor:
+    hidden_dim: 256          # FC1 출력 차원. proposed 기본값=256 / baseline 기본값=1024
+    dropout: 0.3             # FC1 이후 드롭아웃 확률
+
+train:
+  mode: "e2e"                # "e2e": 전체 동시 학습 / "sequential": Phase1→Phase2
+  epochs: 50
+  batch_size: 64
+  amp: false                 # true + CUDA → torch.cuda.amp.GradScaler 활성화
+  gradient_clip_norm: 5.0    # KernelNet 동적 커널의 불안정 gradient 억제
+  freeze_ratio: 0.3          # sequential 모드: 전체 epoch 중 Phase1(Regressor만) 비율
+  warmup_epochs: 0           # 0 → CosineAnnealingLR만 / >0 → LinearLR → CosineAnnealingLR
+
+optimizer:
+  name: "adamw"              # AdamW: gradient와 분리된 weight decay 적용
+  lr: 1.0e-4
+  betas: [0.9, 0.999]        # [β1(1차 모멘텀), β2(2차 모멘텀)]
+  eps: 1.0e-8                # 수치 안정항
+  weight_decay: 1.0e-4       # decoupled weight decay 계수 λ
+
+scheduler:
+  name: "cosine"             # "cosine": CosineAnnealingLR (warmup_epochs=0 시)
+  eta_min: 0.0               # 최소 학습률
+
+eval:
+  monitor: "val_angular_err" # best.pt 저장 기준 지표 (val_loss가 아님)
+  monitor_mode: "min"        # "min" → 값이 작을수록 좋음
+  log_interval_steps: 50     # wandb 스텝 로깅 간격

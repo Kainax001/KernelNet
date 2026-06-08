@@ -1,0 +1,14 @@
+# ──────────────────────────────────────────────
+# runs/ablation_a.yaml
+# KernelNet O + hidden=1024
+# 목적: Regressor 크기를 Baseline과 동일하게 고정하고
+#       KernelNet만의 순수 효과 측정 (비교 대상: baseline_e2e)
+# ──────────────────────────────────────────────
+experiment:
+  name: "ablation_a"
+model:
+  variant: "proposed"
+  regressor:
+    hidden_dim: 1024
+wandb:
+  tags: ["proposed", "e2e", "ablation", "hidden1024"]

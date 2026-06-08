@@ -1,0 +1,13 @@
+# ──────────────────────────────────────────────
+# runs/proposed_e2e_no_brightness.yaml
+# ProposedModel E2E + 밝기 필터 비활성화.
+# summary.tsv에 proposed_e2e_v1(ON)과 나란히 쌓여 밝기 필터 효과를 직접 비교.
+# ──────────────────────────────────────────────
+experiment:
+  name: "proposed_e2e_no_brightness"
+preprocess:
+  quality_filter:
+    brightness:
+      enabled: false         # 밝기 필터 OFF — 어두운/과노출 프레임도 포함
+wandb:
+  tags: ["proposed", "e2e", "no_brightness_filter"]

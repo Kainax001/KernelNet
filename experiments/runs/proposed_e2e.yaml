@@ -1,0 +1,6 @@
+# ──────────────────────────────────────────────
+# runs/proposed_e2e.yaml
+# ProposedModel (KernelNet 포함) E2E 학습. base.yaml 기본값 그대로 사용.
+# ──────────────────────────────────────────────
+experiment:
+  name: "proposed_e2e_v1"   # result_dir → results/proposed_e2e_v1

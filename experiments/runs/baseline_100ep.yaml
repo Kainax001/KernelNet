@@ -1,0 +1,14 @@
+# ──────────────────────────────────────────────
+# runs/baseline_100ep.yaml
+# BaselineModel E2E 100 epoch
+# ──────────────────────────────────────────────
+experiment:
+  name: "baseline_100ep"
+model:
+  variant: "baseline"
+  regressor:
+    hidden_dim: 1024
+train:
+  epochs: 100
+wandb:
+  tags: ["baseline", "e2e", "100ep"]

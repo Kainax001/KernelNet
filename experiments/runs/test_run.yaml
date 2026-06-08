@@ -1,0 +1,11 @@
+# ──────────────────────────────────────────────
+# runs/test_run.yaml
+# 코드 동작 확인용 — 1 epoch, 작은 배치
+# ──────────────────────────────────────────────
+experiment:
+  name: "test_run"
+train:
+  epochs: 1
+  batch_size: 32
+dataset:
+  num_workers: 2

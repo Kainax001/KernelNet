@@ -1,0 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cu118
+torch==2.1.2+cu118
+torchvision==0.16.2+cu118
+mediapipe==0.10.9
+opencv-python==4.9.0.80
+albumentations==1.4.0
+scipy
+h5py
+pyyaml
+numpy
+wandb
+tqdm

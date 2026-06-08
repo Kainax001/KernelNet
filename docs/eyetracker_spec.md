@@ -96,7 +96,7 @@ mat
 
 $$F = \{f_1, f_2, \ldots, f_N\}, \quad f_i \in \texttt{string}$$
 
-$$\texttt{img\_path}_i = \texttt{Original/} \underbrace{p_k}_{\text{피험자}} / \underbrace{d_j}_{\text{세션}} / f_i$$
+$$\texttt{img\_path}_i = \texttt{Original/} \underbrace{p_k}_{\text{subject}} / \underbrace{d_j}_{\text{session}} / f_i$$
 
 **Left.gaze / Right.gaze**
 
@@ -123,7 +123,7 @@ $$I_i \in \mathbb{R}^{H \times W \times 3}, \quad \texttt{dtype: uint8 BGR}$$
 
 > MPIIGaze 원본 이미지는 피험자·기기마다 해상도가 다르다. $H,\,W$는 `img.shape[:2]`로 동적으로 결정된다.
 
-$$\mathbf{g}_i^{\text{label}} \in \mathbb{R}^3 \quad \text{(단위벡터)}$$
+$$\mathbf{g}_i^{\text{label}} \in \mathbb{R}^3 \quad \text{(unit vector)}$$
 
 ### Step 1 — 품질 필터
 
@@ -159,7 +159,7 @@ $$I_{\text{pose}} = \texttt{apply\_pose}(I_i,\;\texttt{cfg})$$
 
 6개 특징점 (코끝·턱·눈 바깥·입 끝):
 
-$$\mathbf{p}_{2D} \in \mathbb{R}^{6\times2}, \qquad \mathbf{p}_{3D} \in \mathbb{R}^{6\times3} \quad \text{(고정 3D 모델, mm)}$$
+$$\mathbf{p}_{2D} \in \mathbb{R}^{6\times2}, \qquad \mathbf{p}_{3D} \in \mathbb{R}^{6\times3} \quad \text{(fixed 3D model, mm)}$$
 
 근사 내부 파라미터 행렬 ($f_{\text{approx}} = W$):
 
@@ -210,7 +210,7 @@ $$\mathbf{g}_i^{\text{label}} \in \mathbb{R}^3, \qquad \mathbf{h}_i \in \mathbb{
 
 베르누이 확률변수 $b \sim \text{Bernoulli}(0.5)$에 대해:
 
-$$b = 1 \;\Rightarrow\; \begin{cases} I_L' = \texttt{flip}_W(I_R), \quad I_R' = \texttt{flip}_W(I_L) & \text{(좌우 swap + 픽셀 반전)} \\ g_x^{\text{label}} \leftarrow -g_x^{\text{label}} & \text{($x$성분 부호 반전)} \end{cases}$$
+$$b = 1 \;\Rightarrow\; \begin{cases} I_L' = \texttt{flip}_W(I_R), \quad I_R' = \texttt{flip}_W(I_L) & \text{(L/R swap + pixel flip)} \\ g_x^{\text{label}} \leftarrow -g_x^{\text{label}} & \text{(negate } x \text{ component)} \end{cases}$$
 
 $$\texttt{flip}_W(I)_{:,\,h,\,w} = I_{:,\,h,\,W-1-w}$$
 
@@ -242,7 +242,7 @@ $$h_{\text{roll}} \leftarrow h_{\text{roll}} - \theta_{\text{rad}}$$
 
 백본 네트워크로 ImageNet [1] 데이터셋으로 사전 학습된 ResNet18 [4] 아키텍처를 채용하였다. 사전 학습된 가중치가 기억하는 원본 데이터의 통계적 분포를 보존하기 위해, 입력 이미지는 모델에 입력되기 전 ImageNet 채널별 평균 및 표준편차로 정규화되었다. OpenCV BGR 채널 순서에 맞춰 RGB 기준값의 채널 순서를 반전하여 적용하였다.
 
-$$\boldsymbol{\mu} = [0.406,\; 0.456,\; 0.485]^\top, \qquad \boldsymbol{\sigma} = [0.225,\; 0.224,\; 0.229]^\top \quad \text{(BGR 채널 순서)}$$
+$$\boldsymbol{\mu} = [0.406,\; 0.456,\; 0.485]^\top, \qquad \boldsymbol{\sigma} = [0.225,\; 0.224,\; 0.229]^\top \quad \text{(BGR channel order)}$$
 
 $$\hat{I}_c = \frac{I_c / 255.0 - \mu_c}{\sigma_c}, \quad c \in \{B, G, R\}$$
 
@@ -634,7 +634,7 @@ $$
 | Phase 2 | $[r \cdot E + 1,\; E]$ | 전체 | — |
 
 $$
-r \in (0,1): \text{freeze ratio}, \quad E: \text{총 epoch 수}
+r \in (0,1): \text{freeze ratio}, \quad E: \text{total epochs}
 $$
 
 | 모드 | 장점 | 단점 |

@@ -96,7 +96,7 @@ mat
 
 $$F = \{f_1, f_2, \ldots, f_N\}, \quad f_i \in \texttt{string}$$
 
-$$\texttt{img\_path}_i = \texttt{Original/} \underbrace{p_k}_{\text{subject}} / \underbrace{d_j}_{\text{session}} / f_i$$
+$$\mathrm{img\_path}_i = \mathrm{Original/} \underbrace{p_k}_{\text{subject}} / \underbrace{d_j}_{\text{session}} / f_i$$
 
 **Left.gaze / Right.gaze**
 
@@ -139,7 +139,7 @@ $$\theta_i = \arccos\!\left(\text{clip}(-g_z^{\text{label}},\,-1,\,1)\right) \le
 
 ### Step 2 — 눈 Bbox 검출
 
-$$I_{\text{det}} = \texttt{apply\_det}(I_i,\;\texttt{cfg})$$
+$$I_{\text{det}} = \mathrm{apply\_det}(I_i,\;\mathrm{cfg})$$
 
 MediaPipe FaceLandmarker (Tasks API 0.10) 로 478개 랜드마크 검출 [2]:
 
@@ -155,7 +155,7 @@ $$\text{bbox}_L,\;\text{bbox}_R \in \mathbb{Z}^4 \quad \text{(x1, y1, x2, y2)}$$
 
 ### Step 3 — 헤드포즈 추정 (PnP)
 
-$$I_{\text{pose}} = \texttt{apply\_pose}(I_i,\;\texttt{cfg})$$
+$$I_{\text{pose}} = \mathrm{apply\_pose}(I_i,\;\mathrm{cfg})$$
 
 6개 특징점 (코끝·턱·눈 바깥·입 끝):
 
@@ -202,9 +202,9 @@ $$\hat{C}_L = \widetilde{C}_L^{\top_{(2,0,1)}} \in \mathbb{R}^{3\times64\times64
 
 ### 입력 (HDF5)
 
-$$\texttt{left\_eye}_i,\; \texttt{right\_eye}_i \in \mathbb{R}^{3 \times 64 \times 64}, \quad \texttt{dtype: uint8}$$
+$$\mathrm{left\_eye}_i,\; \mathrm{right\_eye}_i \in \mathbb{R}^{3 \times 64 \times 64}, \quad \mathrm{dtype: uint8}$$
 
-$$\mathbf{g}_i^{\text{label}} \in \mathbb{R}^3, \qquad \mathbf{h}_i \in \mathbb{R}^3 \quad \text{(head\_pose)}$$
+$$\mathbf{g}_i^{\text{label}} \in \mathbb{R}^3, \qquad \mathbf{h}_i \in \mathbb{R}^3 \quad \text{(head-pose)}$$
 
 ### Step 1 — HorizontalFlip (학습 시 50%)
 

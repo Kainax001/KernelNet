@@ -597,7 +597,7 @@ CosineAnnealingLR은 SGDR [8]에서 제안된 cosine 감쇠 방식을 warm resta
 
 $$
 \eta_e = \begin{cases}
-\eta_{\max} \cdot \dfrac{e}{e_w} & 0 \leq e < e_w \\[6pt]
+\eta_{\max} \cdot \dfrac{e}{e_w} & 0 \leq e < e_w \\
 \eta_{\min} + \dfrac{1}{2}(\eta_{\max}-\eta_{\min})\!\left(1+\cos\dfrac{\pi(e-e_w)}{E-e_w}\right) & e_w \leq e \leq E
 \end{cases}
 $$

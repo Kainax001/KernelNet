@@ -8,6 +8,8 @@
 - 조명/외형 변화에 강건한 눈 이미지 전처리를 **학습으로 대체**할 수 있는가를 검증
 - 캘리브레이션에 비해 외부 작업 필요도 낮음
 
+CNN은 계층적으로 엣지 → 질감 → 형태로 이어지는 위계적 표현을 학습하는 특징 추출기로 기능한다 [13]. 시선 추정에서 CNN은 동공 위치, 홍채 경계, 눈꺼풀 형태 등 시선과 관련된 세밀한 시각 특징을 추출하는데, 입력 이미지가 흐리거나 저조도이면 이 경계들이 뭉개져 유효한 특징 추출이 어렵다. 전처리를 통해 특징을 미리 증폭시키는 것이 유효한 이유가 여기에 있다.
+
 기존 동적 필터 연구 [11]가 영상 생성·예측 태스크에 동적 커널을 적용한 것과 달리, 본 연구는 동적 커널을 **시선 인식 태스크의 전처리 단계**에 배치하여 조명·외형 변화에 강건한 특징 추출을 목표로 한다.
 
 ### 기대효과
@@ -712,3 +714,7 @@ In *Advances in Neural Information Processing Systems (NeurIPS)*.
 [12] Tek, F. B. (2020).
 Adaptive convolution kernel for artificial neural networks.
 arXiv:2009.06385.
+
+[13] Zeiler, M. D., & Fergus, R. (2014).
+Visualizing and understanding convolutional networks.
+In *Proceedings of the European Conference on Computer Vision (ECCV)* (pp. 818–833).

@@ -338,12 +338,15 @@ $$
 
 | 레이어 | 연산 | 입력 shape | 출력 shape | 파라미터 수 |
 |--------|------|-----------|-----------|------------|
-| Conv1 | $W_{c1} * x + b_{c1}$, BN, LReLU, MaxPool(2) | (B,3,64,64) | (B,32,32,32) | 896 |
-| Conv2 | $W_{c2} * x + b_{c2}$, BN, LReLU, MaxPool(2) | (B,32,32,32) | (B,64,16,16) | 18,496 |
-| Conv3 | $W_{c3} * x + b_{c3}$, BN, LReLU, AvgPool | (B,64,16,16) | (B,128) | 73,856 |
+| Conv1 | $W_{c1} * x + b_{c1}$, LReLU, MaxPool(2) | (B,3,64,64) | (B,32,32,32) | 896 |
+| BN1 | BatchNorm2d(32) | (B,32,32,32) | (B,32,32,32) | 64 |
+| Conv2 | $W_{c2} * x + b_{c2}$, LReLU, MaxPool(2) | (B,32,32,32) | (B,64,16,16) | 18,496 |
+| BN2 | BatchNorm2d(64) | (B,64,16,16) | (B,64,16,16) | 128 |
+| Conv3 | $W_{c3} * x + b_{c3}$, LReLU, AvgPool | (B,64,16,16) | (B,128) | 73,856 |
+| BN3 | BatchNorm2d(128) | (B,128,8,8) | (B,128) | 256 |
 | FC1 | $W_1 \mathbf{f} + \mathbf{b}_1$, LReLU | (B,128) | (B,512) | 66,048 |
 | FC2 | $W_2 \mathbf{h} + \mathbf{b}_2$ | (B,512) | (B,75) | 38,475 |
-| **합계** | | | | **197,771** |
+| **합계** | | | | **198,219** |
 
 > LReLU = LeakyReLU(negative\_slope=0.01)
 
@@ -395,10 +398,10 @@ $$\hat{\mathbf{G}} = \frac{\mathbf{o}}{\|\mathbf{o}\|_2} \in \mathbb{R}^{B \time
 
 | 모델 | 레이어 | 연산 | 입력 shape | 출력 shape | 파라미터 수 |
 |------|--------|------|-----------|-----------|------------|
-| Proposed | FC1 | $W_1 \mathbf{x}_{in} + \mathbf{b}_1$, LReLU, Dropout | (B,1027) | (B,256) | 263,424 |
+| Proposed | FC1 | $W_1 \mathbf{x}_{in} + \mathbf{b}_1$, LReLU, Dropout | (B,1027) | (B,256) | 263,168 |
 | Proposed | FC2 | $W_2 \mathbf{h} + \mathbf{b}_2$ | (B,256) | (B,3) | 771 |
 | Proposed | normalize | $\mathbf{o}/\|\mathbf{o}\|_2$ | (B,3) | (B,3) | 0 |
-| Proposed | **합계** | | | | **264,195** |
+| Proposed | **합계** | | | | **263,939** |
 | Baseline | FC1 | $W_1 \mathbf{x}_{in} + \mathbf{b}_1$, LReLU, Dropout | (B,1027) | (B,1024) | 1,052,672 |
 | Baseline | FC2 | $W_2 \mathbf{h} + \mathbf{b}_2$ | (B,1024) | (B,3) | 3,075 |
 | Baseline | normalize | $\mathbf{o}/\|\mathbf{o}\|_2$ | (B,3) | (B,3) | 0 |
@@ -487,7 +490,7 @@ $$|\theta_{\text{Backbone}}| = |\theta_{\text{ResNet18}}| - |\theta_{\text{FC}}^
 
 $$|\theta^{\text{Proposed}}| = |\theta_{\text{Backbone}}| + |\theta_{\text{KernelNet}}| + |\theta_{\text{Regressor}}^{\text{P}}|$$
 
-$$= 11{,}176{,}512 + 197{,}771 + 264{,}195 = 11{,}638{,}478 \approx 11.64\text{M}$$
+$$= 11{,}176{,}512 + 198{,}219 + 263{,}939 = 11{,}638{,}670 \approx 11.64\text{M}$$
 
 **BaselineModel** (KernelNet 없음):
 
@@ -498,9 +501,9 @@ $$= 11{,}176{,}512 + 1{,}055{,}747 = 12{,}232{,}259 \approx 12.23\text{M}$$
 | 모듈 | Proposed | Baseline |
 |------|:--------:|:--------:|
 | SiameseBackbone (ResNet18, shared) | 11,176,512 | 11,176,512 |
-| KernelNet | 197,771 | — |
-| Regressor | 264,195 | 1,055,747 |
-| **합계** | **11,638,478** | **12,232,259** |
+| KernelNet | 198,219 | — |
+| Regressor | 263,939 | 1,055,747 |
+| **합계** | **11,638,670** | **12,232,259** |
 
 > SiameseBackbone은 좌/우안에 가중치를 공유하므로 1회만 산정.
 
